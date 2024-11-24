@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 np.random.seed(42) 
 
+##################### PARTS OF THIS CODE WAS WRITTEN WITH THE HELP OF GENERATIVE AI #####################
+
 def main(model_type=2021_2, year=2021, model_path=None, base_path="LSTM_results"):
     # file path er grouped_data_return_daily.csv
     def find_rebalancing_dates(file_path, start_date, end_date):
@@ -79,7 +81,7 @@ def main(model_type=2021_2, year=2021, model_path=None, base_path="LSTM_results"
                     print(g, l, date, allocations)
                     print(1)
                 if model == "random":
-                    vector = np.random.rand(data.columns.size)  # Generate 148 random values between 0 and 1
+                    vector = np.random.rand(data.columns.size)  
                     allocations = vector / vector.sum()
                 if model == "baseline":
                     allocations = np.full(data.columns.size, 1/data.columns.size)
@@ -102,12 +104,6 @@ def main(model_type=2021_2, year=2021, model_path=None, base_path="LSTM_results"
     allocation_history_df = generate_allocation_history(model, rebalancing_dates, data, asset_list)
     #print(allocation_history_df)
 
-    #Portfolio simulation
-    # Allocation history er LSTM output pr date
-    # Asset list er de assets vi har i common_stocks - Copy.csv
-    # Data er de returns vi har i grouped_data_return_daily.csv
-    # Init capital = 1000000
-    # trans cost = 0.0002
     def simulate_portfolio(allocation_history, asset_list, data, init_capital, trans_cost):
         portfolio_value = init_capital
         holdings = pd.Series(0.0, index=asset_list)
@@ -167,7 +163,6 @@ def main(model_type=2021_2, year=2021, model_path=None, base_path="LSTM_results"
 
 
 
-    #SHARPE RATIO beregnet ud fra csv output fra simulate_portfolio og allocation history csv fra LSTM som du også bruger i simulate_portfolio
     def calculate_weekly_sharpe_ratio(cvar_simulation_file=f"{base_path}/{model_type}/LSTM_simulation1.csv", cvar_results_file=f"{base_path}/{model_type}/allocation_history.csv"):
         cvar_simulation = pd.read_csv(cvar_simulation_file, parse_dates=['Date'])
         cvar_simulation.set_index('Date', inplace=True)

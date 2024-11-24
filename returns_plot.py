@@ -5,6 +5,9 @@ import numpy as np
 import sys
 import os
 
+##################### PARTS OF THIS CODE WAS WRITTEN WITH THE HELP OF GENERATIVE AI #####################
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from test_cvar import optimize_cvar_portfolio, calculate_var_cvar_for_portfolio
 

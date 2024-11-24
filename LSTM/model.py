@@ -16,7 +16,6 @@ class LSTMAllocationModelWithAttention(nn.Module):
         self.recent_days = recent_days
         self.entmax_alpha = entmax_alpha
 
-        # LSTM layers
         self.lstm_layers = nn.ModuleList()
         for i in range(self.num_layers):
             input_dim = input_size if i == 0 else hidden_sizes[i - 1]
@@ -25,13 +24,10 @@ class LSTMAllocationModelWithAttention(nn.Module):
         self.dropout = nn.Dropout(p=dropout_rate)
         self.batch_norms = nn.ModuleList([nn.BatchNorm1d(size) for size in hidden_sizes])
 
-        # Attention layer
         self.attention_weights = nn.Linear(hidden_sizes[-1], 1, bias=False)
 
-        # Entmax activation layer
         self.entmax = EntmaxBisect(dim=1, alpha=entmax_alpha)
 
-        # Initialize weights
         self.initialize_weights()
 
     def initialize_weights(self):
@@ -40,16 +36,16 @@ class LSTMAllocationModelWithAttention(nn.Module):
         """
         for name, param in self.named_parameters():
             if 'weight' in name:
-                if 'lstm' in name:  # LSTM weights
-                    nn.init.xavier_normal_(param)  # Xavier Normal Initialization
-                elif 'attention_weights' in name:  # Attention weights
-                    nn.init.xavier_uniform_(param)  # Xavier Uniform Initialization
+                if 'lstm' in name:  
+                    nn.init.xavier_normal_(param)  
+                elif 'attention_weights' in name: 
+                    nn.init.xavier_uniform_(param) 
             elif 'bias' in name:
-                nn.init.zeros_(param)  # Zero initialize biases
+                nn.init.zeros_(param)  
 
 
     def forward(self, x):
-        # Pass through LSTM layers
+
         for i, lstm in enumerate(self.lstm_layers):
             h0 = torch.zeros(1, x.size(0), self.hidden_sizes[i], device=x.device)
             c0 = torch.zeros(1, x.size(0), self.hidden_sizes[i], device=x.device)
@@ -63,18 +59,17 @@ class LSTMAllocationModelWithAttention(nn.Module):
             x = x.permute(0, 2, 1)
             x = self.dropout(x)
 
-        # Attention mechanism with recent days weighting
-        attn_scores = self.attention_weights(x).squeeze(-1)  # Calculate raw attention scores
 
-        # Create a mask that weights recent days higher
+        attn_scores = self.attention_weights(x).squeeze(-1)  
+
+ r
         recent_mask = torch.ones_like(attn_scores)
-        recent_mask[:, -self.recent_days:] *= self.decay_weight  # Increase weight for last 'recent_days' points
-        attn_scores = attn_scores * recent_mask  # Apply mask to attention scores
+        recent_mask[:, -self.recent_days:] *= self.decay_weight  
+        attn_scores = attn_scores * recent_mask 
 
-        attn_weights = torch.softmax(attn_scores, dim=1)  # Apply softmax to get final attention weights
-        x = torch.sum(x * attn_weights.unsqueeze(-1), dim=1)  # Weighted sum based on adjusted attention
+        attn_weights = torch.softmax(attn_scores, dim=1)  
+        x = torch.sum(x * attn_weights.unsqueeze(-1), dim=1) 
 
-        # Apply entmax for allocation values between 0 and 1
         allocations = self.entmax(x)
 
         return allocations

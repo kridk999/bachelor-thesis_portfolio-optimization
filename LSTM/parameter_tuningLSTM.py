@@ -13,20 +13,19 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 
+##################### PARTS OF THIS CODE WAS WRITTEN WITH THE HELP OF GENERATIVE AI #####################
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 np.random.seed(42)
 os.makedirs("models1", exist_ok=True)
 
 def batch_entropy_penalty(allocations):
-    # Compute the batch-wise entropy
     batch_probabilities = allocations / allocations.sum(dim=1, keepdim=True)
     entropy = -torch.sum(batch_probabilities * torch.log(batch_probabilities + 1e-8), dim=1).mean()
-    # Penalize low entropy
     return -entropy
 
 
 
-# Hyperparameters
 hidden_unit_options = [[148]]
 sequence_length_options = [30]
 learning_rate_list = [1e-3]

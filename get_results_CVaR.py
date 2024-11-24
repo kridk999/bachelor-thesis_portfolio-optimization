@@ -5,6 +5,9 @@ from tqdm import tqdm
 from sharpe import calculate_weekly_sharpe_ratio
 from CVaR_optimization_time_decay import optimize_portfolio, simulate_portfolio, find_rebalancing_dates
 
+##################### PARTS OF THIS CODE WAS WRITTEN WITH THE HELP OF GENERATIVE AI #####################
+
+
 test_years = {
     2021: ["2021_3"],
     2022: ["2022_3"],

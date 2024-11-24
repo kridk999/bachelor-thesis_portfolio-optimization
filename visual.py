@@ -5,6 +5,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
 
+##################### PARTS OF THIS CODE WAS WRITTEN WITH THE HELP OF GENERATIVE AI #####################
+
+
 def visual_main(base_path='CVAR_results'):
     # Define paths for result folders and visualization output
 
