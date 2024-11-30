@@ -62,7 +62,6 @@ class LSTMAllocationModelWithAttention(nn.Module):
 
         attn_scores = self.attention_weights(x).squeeze(-1)  
 
- r
         recent_mask = torch.ones_like(attn_scores)
         recent_mask[:, -self.recent_days:] *= self.decay_weight  
         attn_scores = attn_scores * recent_mask 
